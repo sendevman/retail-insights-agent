@@ -1,0 +1,33 @@
+name: Import assignment history
+on:
+  push:
+    branches: [main]
+    paths: ['.publish/submission.bundle.b64']
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GIT_AUTHOR_NAME: Alexsandru Solca
+      GIT_AUTHOR_EMAIL: alexandrusolca@outlook.com
+      GIT_COMMITTER_NAME: Alexsandru Solca
+      GIT_COMMITTER_EMAIL: alexandrusolca@outlook.com
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and import preserved assignment
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode .publish/submission.bundle.b64 > "$RUNNER_TEMP/submission.bundle"
+          git bundle verify "$RUNNER_TEMP/submission.bundle"
+          git fetch "$RUNNER_TEMP/submission.bundle" main:refs/remotes/submission/main
+          original="$(git rev-parse refs/remotes/submission/main)"
+          test "$original" = "0009690c049d2852aefa40b2029a2ea9c4a1dfe9"
+          test "$(git show -s --format='%an <%ae>' "$original")" = "Alexsandru Solca <alexandrusolca@outlook.com>"
+          tree="$(git rev-parse "$original^{tree}")"
+          test "$tree" = "f41a761f37c658cf8b08fec7d7d625bd9f2932bf"
+          published="$(printf '%s\n' 'Publish retail analytics assignment with original history' | git commit-tree "$tree" -p HEAD -p "$original")"
+          git push origin "$published:refs/heads/main"
+          git show --no-patch --format=fuller "$published"
