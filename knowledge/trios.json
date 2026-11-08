@@ -1,0 +1,36 @@
+[
+  {
+    "id": "revenue-v1",
+    "status": "approved",
+    "schema_version": "scoped-item-v1",
+    "product_ids": [],
+    "synthetic": true,
+    "question": "Compare monthly completed revenue by product and create a report",
+    "sql": "SELECT product_id, FORMAT_DATE('%Y-%m', event_date) AS month, SUM(IF(status='Complete', sale_price, 0)) AS revenue FROM scoped_sales GROUP BY 1,2",
+    "analyst_report": "Compare complete months with the same scope. Separate units from price and product mix. Partial months are not comparable to full months. Treat explanations as hypotheses pending evidence.",
+    "metric_definition": "Revenue is completed item sale_price; date is UTC item creation. Returned/cancelled items excluded. This is not GAAP revenue."
+  },
+  {
+    "id": "state-spend-v1",
+    "status": "approved",
+    "schema_version": "scoped-item-v1",
+    "product_ids": [],
+    "synthetic": true,
+    "question": "Why are customers in one state underspending compared to another state? Compare customer behavior",
+    "sql": "SELECT state, COUNT(DISTINCT customer_key) AS customers, SUM(IF(status='Complete',sale_price,0)) AS revenue FROM scoped_sales GROUP BY state",
+    "analyst_report": "Check spend per purchasing customer, completed order value and units. Different customer bases and product mixes can explain totals. Observational differences are not proof of causation. No order in scope is not proof of churn.",
+    "metric_definition": "Customer means a distinct pseudonymous purchaser of an authorized product during the requested period."
+  },
+  {
+    "id": "churn-v1",
+    "status": "approved",
+    "schema_version": "scoped-item-v1",
+    "product_ids": [],
+    "synthetic": true,
+    "question": "Why did churn spike last month?",
+    "sql": "-- Not executable: agree inactivity window, eligibility, and observation cutoff first.",
+    "analyst_report": "There is no subscription/cancellation history. Ask whether the user means a 90-day inactivity proxy, which cohort to use, and whether activity is scoped to their products. Do not label a monthly decline in buyers as churn.",
+    "metric_definition": "Undefined until approved by the business."
+  }
+]
+

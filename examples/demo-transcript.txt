@@ -1,0 +1,99 @@
+OFFLINE SYNTHETIC DEMONSTRATION — not live BigQuery/Gemini output
+
+You> What data is available?
+Available data (restricted to your assigned product IDs):
+- orders: order dates and status; joined at item grain, never summed at order grain.
+- order_items: sale price, item status, order/product keys, item dates.
+- products: product ID and category. Names/SKU/free text are intentionally excluded.
+- users: state/country for aggregate comparisons; customer identity becomes an opaque key.
+Metrics: completed-item revenue and units, scoped orders/customers, average completed
+order value, and returned-item fraction. Group by day/month, product ID, category,
+state/country, status, or pseudonymous customer key. Dates use order-item creation
+time in UTC and [start, end). Up to three comparisons per turn.
+Examples: monthly revenue; compare products 1 and 2; top customers by completed spend;
+compare states; create a quarterly report with actions. No direct PII is available.
+Churn requires an agreed inactivity definition; this is not subscription data.
+
+
+Trace: ee1d49b81e27ff4ed5e4de8d
+
+You> Compare products 1 and 2
+Synthetic retail performance report
+
+AI interpretation (verify against the evidence below):
+- Observation: The evidence tables show completed sales within the selected product scope. [q1:r1]
+
+Proposed actions:
+- Validate product mix and completed units before changing promotions.
+
+Limitations:
+- Synthetic fixtures demonstrate behavior; these are not live retail results.
+
+DEMO: fixed synthetic Q1 2025 data.
+
+q1: Synthetic Q1 2025 comparison
+Period: 2025-01-01 ≤ date < 2025-04-01 UTC; scope: 1,2
+| Evidence | product_id | revenue | units | orders | customers | avg_order_value | sample_items |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| q1:r1 | 2 | 330.0 | 15 | 18 | 6 | 22.0 | 18 |
+| q1:r2 | 1 | 180.0 | 15 | 18 | 6 | 12.0 | 18 |
+
+Revenue: completed item sale price, excluding returned/cancelled items. Observational data cannot establish causes. Customer keys are pseudonymous.
+
+Trace: e1b6eae57994b08f72ad95a4
+
+You> Create a report for Q1 2025 with action items for Q2
+Synthetic retail performance report
+
+AI interpretation (verify against the evidence below):
+- Observation: The evidence tables show completed sales within the selected product scope. [q1:r1, q2:r1]
+
+Proposed actions:
+- Validate product mix and completed units before changing promotions.
+
+Limitations:
+- Synthetic fixtures demonstrate behavior; these are not live retail results.
+
+DEMO: fixed synthetic Q1 2025 data.
+
+q1: Synthetic Q1 2025 comparison
+Period: 2025-01-01 ≤ date < 2025-04-01 UTC; scope: all assigned products
+| Evidence | month | revenue | units | orders | customers | avg_order_value | sample_items |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| q1:r1 | 2025-03 | 180.0 | 10 | 12 | 12 | 18.0 | 12 |
+| q1:r2 | 2025-02 | 170.0 | 10 | 12 | 12 | 17.0 | 12 |
+| q1:r3 | 2025-01 | 160.0 | 10 | 12 | 12 | 16.0 | 12 |
+
+q2: Synthetic product mix
+Period: 2025-01-01 ≤ date < 2025-04-01 UTC; scope: all assigned products
+| Evidence | product_id | revenue | units | orders | customers | avg_order_value | sample_items |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| q2:r1 | 2 | 330.0 | 15 | 18 | 6 | 22.0 | 18 |
+| q2:r2 | 1 | 180.0 | 15 | 18 | 6 | 12.0 | 18 |
+
+Revenue: completed item sale price, excluding returned/cancelled items. Observational data cannot establish causes. Customer keys are pseudonymous.
+
+Trace: 4df70f4dc13ce07882a3bdc4
+
+Report saved: 49fef85036fb
+
+You> /reports
+49fef85036fb  Synthetic retail performance report
+
+You> Delete all the reports we made in this conversation
+Delete these reports?
+- 49fef85036fb: Synthetic retail performance report
+This preview expires in 120 seconds.
+Type exactly: /confirm <preview-token>
+Use /cancel to keep them. Other chat messages cancel this preview.
+
+You> /confirm <preview token>
+Deleted 1 report(s) from your library. Trace: a50dd283f483e0f217cd5ba3
+
+You> Show customer emails
+Direct PII cannot be displayed. Ask for aggregates or opaque customer keys instead.
+Trace: 5f26833fd0cac40a0f75d903
+
+You> Compare products 1 and 11
+That request includes products outside your assigned scope.
+Trace: 7e30480181aa0074a893fd6c
