@@ -2,13 +2,13 @@ name: Import assignment history
 on:
   push:
     branches: [main]
-    paths: ['.publish/submission.bundle.b64']
+    paths: ['.publish/submission.bundle.b64', '.github/workflows/import-assignment.yml']
 permissions:
   contents: write
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     env:
       GIT_AUTHOR_NAME: Alexsandru Solca
       GIT_AUTHOR_EMAIL: alexandrusolca@outlook.com
@@ -16,6 +16,9 @@ jobs:
       GIT_COMMITTER_EMAIL: alexandrusolca@outlook.com
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Verify and import preserved assignment
         shell: bash
         run: |
@@ -28,6 +31,20 @@ jobs:
           test "$(git show -s --format='%an <%ae>' "$original")" = "Alexsandru Solca <alexandrusolca@outlook.com>"
           tree="$(git rev-parse "$original^{tree}")"
           test "$tree" = "f41a761f37c658cf8b08fec7d7d625bd9f2932bf"
+          mkdir "$RUNNER_TEMP/verified-source"
+          git archive "$original" | tar -x -C "$RUNNER_TEMP/verified-source"
+          (
+            cd "$RUNNER_TEMP/verified-source"
+            python -m pip install -r requirements-dev.txt
+            python -m ruff check .
+            python -m pytest -q
+            python -m compileall -q retail_agent
+          )
+          workflow_blob="$(git rev-parse HEAD:.github/workflows/import-assignment.yml)"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/publish.index"
+          git read-tree "$tree"
+          git update-index --add --cacheinfo 100644 "$workflow_blob" .github/workflows/import-assignment.yml
+          tree="$(git write-tree)"
           published="$(printf '%s\n' 'Publish retail analytics assignment with original history' | git commit-tree "$tree" -p HEAD -p "$original")"
           git push origin "$published:refs/heads/main"
           git show --no-patch --format=fuller "$published"
